@@ -1,0 +1,1 @@
+Set-Content -Path C:\ansible-demo\test2.txt -Value 'Copy That'

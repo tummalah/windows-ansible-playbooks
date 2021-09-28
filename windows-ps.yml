@@ -1,0 +1,19 @@
+---
+ - name: Ansible win_shell module example 
+   
+   hosts: windows
+   tasks:
+    - name: Create Ansible directory in Windows hosts
+      ansible.windows.win_file:
+        path: C:\ansible-demo
+        state: directory
+    - name: Copy PowerShell Script to Windows hosts
+      win_copy: 
+       src: ./sample.ps1
+       dest: C:\ansible-demo\sample.ps1
+    - name: Execute PowerShell on Windows hosts
+      win_shell: C:\ansible-demo\sample.ps1
+    - name: Run multi-lined shell commands 
+      win_shell: |
+        $text = ' JDE Team Rocks'
+        Set-Content -Path C:\ansible-demo\test3.txt -Value $text 

@@ -1,0 +1,6 @@
+---
+ - name: Ansible win_command module 
+   hosts: windows       
+   tasks: 
+   -  name: run an executable command on a remote Windows system
+      win_command: netstat -e

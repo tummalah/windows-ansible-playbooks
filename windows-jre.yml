@@ -1,0 +1,27 @@
+---
+ - name: Ansible install java example 
+   
+   hosts: windows
+   vars:
+    java_major_version: 8.0
+    java_minor_version: 271
+   tasks:
+   -  name: Install Java
+      ansible.windows.win_package:
+       path: D:\softwares\jdk-8u271-windows-x64.exe
+       product_id: jdk1.8
+       state: present
+       arguments:
+        - /s
+   -  name: Set Java_home
+      win_environment:
+        state: present
+        name: JAVA_HOME
+        value: 'c:\program files\java\jdk1.{{ java_major_version }}_{{ java_minor_version }}'
+        level: machine
+
+   -  name: Add Java to path
+      win_path:
+        elements:
+        - 'c:\program files\java\jdk1.{{ java_major_version }}_{{ java_minor_version }}\bin'
+

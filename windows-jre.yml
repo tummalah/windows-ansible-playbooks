@@ -5,6 +5,8 @@
    vars:
     java_major_version: 8.0
     java_minor_version: 271
+    java_path: 'c:\program files\java\jdk1.{{ java_major_version }}_{{ java_minor_version }}'
+    
    tasks:
    -  name: Install Java
       ansible.windows.win_package:
@@ -17,11 +19,11 @@
       win_environment:
         state: present
         name: JAVA_HOME
-        value: 'c:\program files\java\jdk1.{{ java_major_version }}_{{ java_minor_version }}'
+        value: "{{ java_path }}"
         level: machine
 
    -  name: Add Java to path
       win_path:
         elements:
-        - 'c:\program files\java\jdk1.{{ java_major_version }}_{{ java_minor_version }}\bin'
+        - '{{ java_path }}\bin'
 

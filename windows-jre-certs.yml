@@ -1,0 +1,13 @@
+---
+ - name: Ansible install jre certs 
+   hosts: windows
+   vars:
+    java_major_version: 8.0
+    java_minor_version: 271
+    java_path: 'c:\program files\java\jdk1.{{ java_major_version }}_{{ java_minor_version }}'   
+   tasks: 
+   -  name: Install Certs
+      win_command: keytool -import -trustcacerts -alias  "{{ item.alias }}" -file "{{ item.path }}" -keystore cacerts -storepass changeit -noprompt
+      loop:
+       - {path: 'D:\softwares\certs\mck_root.cer', alias: 'mckroot'}
+       - {path: 'D:\softwares\certs\mck_inter.cer', alias: 'mckinter'}

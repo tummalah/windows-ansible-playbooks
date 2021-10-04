@@ -1,0 +1,23 @@
+---
+ - name: Ansible weblogic example 
+   hosts: windows
+   vars:
+      java_major_version: 8.0
+      java_minor_version: 271
+      java_path: 'c:\program files\java\jdk1.{{ java_major_version }}_{{ java_minor_version }}'
+      oracle_home: 'D:\Oracle\product\fmw122140'
+      install_weblogic_rsp_file: 'D:\softwares\weblogic.rsp'
+      install_java_home:
+      install_weblogic_file: 'D:\softwares\fmw_12.2.1.4.0_wls_Disk1_1of1\fmw_12.2.1.4.0_wls.jar' 
+    
+   tasks:
+    - name: "Create Oracle Home Directory"
+      ansible.windows.win_file:
+        path: "{{ oracle_home }}"
+        state: directory
+    - name: "Using a template to create the Weblogic response file"
+      ansible.windows.win_template:
+        src: templates/weblogic.rsp.j2
+        dest: "{{ install_weblogic_rsp_file }}"
+    - name: "Installing Weblogic"
+      win_command: java -jar "{{ install_weblogic_file }}" -silent -responseFile "{{ install_weblogic_rsp_file }}"

@@ -1,0 +1,31 @@
+---
+ - name: Ansible weblogic domain create example 
+   hosts: windows
+   vars:
+      java_major_version: 8.0
+      java_minor_version: 271
+      jdk_folder: 'c:\program files\java\jdk1.{{ java_major_version }}_{{ java_minor_version }}'
+      oracle_home: 'D:\Oracle\product\fmw122140'
+      oracle_common: '{{ oracle_home }}\oracle_common'
+      weblogic_home: 'D:\\Oracle\\product\\fmw122140\\wlserver'
+      domain_name: WLE1POC
+      nodemanager_username: weblogic #should be from Vault
+      weblogic_admin: weblogic #should be from Vault
+      admin_server_name: AdminServer
+      server_hostname: '{{ ansible_fqdn }}'
+      domains_home: 'D:\Oracle\config\domains'
+      domain_home: '{{ domains_home }}\{{ domain_name }}'
+      applications_home: '{{ oracle_home }}\config\applications'
+      nodemanager_home: '{{ oracle_home }}\config\nodemanagers\{{ domain_name }}'
+      weblogic_admin_pass: welcome1 #should be from Vault
+      nodemanager_password: welcome1 #should be from Vault
+      install_weblogic_domain_file: 'D:\softwares\weblogic-domain.py'
+   tasks:
+    
+    - name: "Using a template to create the Weblogic domain py file"
+      ansible.windows.win_template:
+        src: templates/weblogic-domain.py.j2
+        dest: "{{ install_weblogic_domain_file }}"
+    - name: "Create Weblogic Domain from file"
+      win_command: '{{ oracle_common }}\common\bin\wlst.cmd {{ install_weblogic_domain_file }}'
+    

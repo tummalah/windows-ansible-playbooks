@@ -1,5 +1,5 @@
 ---
- - name: Ansible weblogic node manager server startup example 
+ - name: Ansible weblogic admin server startup example 
    hosts: windows
    vars:
       java_major_version: 8.0
@@ -25,17 +25,17 @@
       nodemanager_home_windows: '{{ domain_home_windows }}\\nodemanager'
       weblogic_admin_pass: welcome1 #should be from Vault
       nodemanager_password: welcome1 #should be from Vault
-      install_weblogic_nodemanager_properties: '{{ domains_home }}\{{ domain_name }}\nodemanager\nodemanager.properties'
-      install_weblogic_nodemanager_service: '{{ domains_home }}\{{ domain_name }}\bin\installNodeMgrSvc.cmd' # not using 
+      install_weblogic_service: 'D:\softwares\weblogic-admin.cmd'
+      
    tasks:
-    - name: "Using a template to create the nodemanager.properties file"
+    - name: "Using a template to create the windows service script"
       ansible.windows.win_template:
-        src: templates/nodemanager.properties.j2
-        dest: "{{ install_weblogic_nodemanager_properties }}"
+        src: templates/weblogic.service.j2
+        dest: "{{ install_weblogic_service }}"
     
-    - name: "Create Weblogic Nodemanager as windows service"
-      win_command: '{{ install_weblogic_nodemanager_service }}'
-    - name: "start node manager service"
+    - name: "Create Weblogic AdminServer as windows service"
+      win_command: '{{ install_weblogic_service }}'
+    - name: "start AdminServer service"
       win_service:
-        name: Oracle Weblogic {{ domain_name }} NodeManager ({{ bar_home }})
+        name: Oracle WebLogic {{ domain_name }} AdminServer
         state: started

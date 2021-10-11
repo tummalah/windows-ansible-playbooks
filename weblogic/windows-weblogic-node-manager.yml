@@ -1,0 +1,41 @@
+---
+ - name: Ansible weblogic admin server startup example 
+   hosts: windows
+   vars:
+      java_major_version: 8.0
+      java_minor_version: 271
+      jdk_folder: 'c:\program files\java\jdk1.{{ java_major_version }}_{{ java_minor_version }}'
+      jdk_folder_windows: 'c\:\\program files\\java\\jdk1.{{ java_major_version }}_{{ java_minor_version }}'
+      oracle_home: 'D:\Oracle\product\fmw122140'
+      oracle_home_windows: 'D\:\\Oracle\\product\\fmw122140'
+      oracle_common: '{{ oracle_home }}\oracle_common'
+      weblogic_home: 'D:\Oracle\product\fmw122140\wlserver'
+      bar_home: D_Oracle_product_fmw122140_wlserver #refactor this using weblogic home above
+      domain_name: WLE1POC
+      nodemanager_username: weblogic #should be from Vault
+      weblogic_admin: weblogic #should be from Vault
+      admin_server_name: AdminServer
+      server_hostname: '{{ ansible_fqdn }}'
+      domains_home: 'D:\Oracle\config\domains'
+      domains_home_windows: 'D\:\\Oracle\\config\\domains'
+      domain_home: '{{ domains_home }}\{{ domain_name }}'
+      domain_home_windows: '{{ domains_home_windows }}\\{{ domain_name }}'
+      applications_home: '{{ oracle_home }}\config\applications'
+      nodemanager_home: '{{ domains_home }}\{{ domain_name }}\nodemanager\{{ domain_name }}'
+      nodemanager_home_windows: '{{ domain_home_windows }}\\nodemanager'
+      weblogic_admin_pass: welcome1 #should be from Vault
+      nodemanager_password: welcome1 #should be from Vault
+      install_weblogic_nodemanager_properties: '{{ domains_home }}\{{ domain_name }}\nodemanager\nodemanager.properties'
+      install_weblogic_nodemanager_service: '{{ domains_home }}\{{ domain_name }}\bin\installNodeMgrSvc.cmd' # not using 
+   tasks:
+    - name: "Using a template to create the nodemanager.properties file"
+      ansible.windows.win_template:
+        src: templates/nodemanager.properties.j2
+        dest: "{{ install_weblogic_nodemanager_properties }}"
+    
+    - name: "Create Weblogic Nodemanager as windows service"
+      win_command: '{{ install_weblogic_nodemanager_service }}'
+    - name: "start node manager service"
+      win_service:
+        name: Oracle Weblogic {{ domain_name }} NodeManager ({{ bar_home }})
+        state: started

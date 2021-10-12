@@ -1,0 +1,30 @@
+---
+ - name: Ansible ohs domain create example 
+   hosts: windows
+   vars:
+      java_major_version: 8.0
+      java_minor_version: 271
+      java_home: 'D:\Oracle\product\ohs122140\oracle_common\jdk\jre'
+      ohs_home: 'D:\Oracle\product\ohs122140'
+      ohs_home_windows: 'D:\\Oracle\\product\\ohs122140'
+      ohs_domain_name: OHSE1
+      ohs_domain: 'D:\Oracle\config\domains\{{ohs_domain_name}}'
+      nodemanager_username: weblogic
+      nodemanager_password: welcome1
+      nodemanager_home: '{{ohs_domain}}\nodemanager'
+      server_hostname: '{{ansible_fqdn}}'
+      ohs_instance: ohs1
+      ohs_adminport: 7779
+      ohs_http_port: 7777
+      ohs_ssl_port: 443
+      install_ohs_domain_file: 'D:\softwares\ohs-domain.py'
+
+   tasks:
+    
+    - name: "Using a template to create the ohs domain py file"
+      ansible.windows.win_template:
+        src: templates/create-ohs-domain.py.j2
+        dest: "{{ install_ohs_domain_file }}"
+    - name: "Create ohs Domain from file"
+      win_command: '{{ ohs_home }}\oracle_common\common\bin\wlst.cmd {{ install_ohs_domain_file }}'
+    

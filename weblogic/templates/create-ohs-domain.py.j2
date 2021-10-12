@@ -1,0 +1,46 @@
+
+
+v_mwHome='{{ohs_home}}'
+v_jdkHome='{{java_home}}'
+v_domainHome='{{ohs_domain}}'
+v_domainName='{{ohs_domain_name}}'
+v_NMUsername='{{nodemanager_username}}'
+v_NMPassword='{{nodemanager_password}}'
+v_NMHome='{{nodemanager_home}}'
+#v_NMHost='{{server_hostname}}'
+#v_NMPort=5557
+v_OHSInstanceName='{{ohs_instance}}'
+v_OHSAdminPort='{{ohs_adminport}}'
+v_OHSHTTPPort='{{ohs_http_port}}'
+v_OHSSSLPort='{{ohs_ssl_port}}'
+
+#base_template='{{ohs_home_windows}}' + '\\wlserver\\common\\templates\\wls\\base_standalone.jar';
+standalone_template= '{{ohs_home_windows}}' + '\\ohs\\common\\templates\\wls\\ohs_standalone_template.jar';
+
+readTemplate(standalone_template)
+
+ 
+cd('/')
+
+create(v_domainName, 'SecurityConfiguration') 
+cd('SecurityConfiguration/' + v_domainName)
+set('NodeManagerUsername',v_NMUsername)
+set('NodeManagerPasswordEncrypted',v_NMPassword)
+setOption('NodeManagerType', 'PerDomainNodeManager');
+setOption('NodeManagerHome', v_NMHome);
+setOption('JavaHome', v_jdkHome )
+ 
+cd('/')
+
+ 
+delete(v_OHSInstanceName,'SystemComponent')
+create (v_OHSInstanceName,'SystemComponent')
+cd('/OHS/'+v_OHSInstanceName)
+cmo.setAdminHost('localhost')
+cmo.setAdminPort(v_OHSAdminPort)
+cmo.setListenPort(v_OHSHTTPPort)
+cmo.setSSLListenPort(v_OHSSSLPort)
+ 
+writeDomain(v_domainHome) 
+ 
+closeTemplate()

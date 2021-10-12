@@ -1,0 +1,30 @@
+---
+ - name: Ansible OHS example 
+   hosts: windows
+   vars:
+      
+      java_path: 'D:\Oracle\product\ohs122140\oracle_common\jdk\jre'
+      oracle_home: 'D:\Oracle\product\ohs122140'
+      install_ohs_rsp_file: 'D:\softwares\weblogic-ohs.rsp'
+      
+      install_ohs_file: 'D:\softwares\fmw_12.2.1.4.0_ohs_win64_Disk1_1of1\setup_fmw_12.2.1.4.0_ohs_win64.exe' 
+    
+   tasks:
+    - name: "Create Oracle Home Directory"
+      ansible.windows.win_file:
+        path: "{{ oracle_home }}"
+        state: directory
+    - name: "Using a template to create the Weblogic OHS response file"
+      ansible.windows.win_template:
+        src: templates/ohs.rsp.j2
+        dest: "{{ install_ohs_rsp_file }}"
+    -  name: Install OHS
+       ansible.windows.win_package:
+        path: "{{ install_ohs_file }}"
+        product_id: ohs122140
+        state: present
+        arguments:
+          - /silent
+          - /responseFile "{{ install_ohs_rsp_file }}"
+    #- name: "Installing OHS"
+    #  win_command: "{{ install_ohs_file }} -silent -responseFile {{ install_ohs_rsp_file }}"

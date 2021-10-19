@@ -1,0 +1,36 @@
+---
+ - name: Ansible weblogic node manager server startup example 
+   hosts: windows
+   vars:
+      
+      jdk_folder: 'D:\Oracle\product\ohs122140\oracle_common\jdk\jre'
+      
+      oracle_home: 'D:\Oracle\product\ohs122140'
+      
+      oracle_common: '{{ oracle_home }}\oracle_common'
+      weblogic_home: 'D:\Oracle\product\ohs122140\wlserver'
+      bar_home: D_Oracle_product_ohs122140_wlserver #refactor this using weblogic home above
+      domain_name: OHSE1
+      nodemanager_username: weblogic #should be from Vault
+      
+      server_hostname: '{{ ansible_fqdn }}'
+      domains_home: 'D:\Oracle\config\domains'
+      domains_home_windows: 'D\:\\Oracle\\config\\domains'
+      domain_home: '{{ domains_home }}\{{ domain_name }}'
+      nodemanager_home: '{{ domain_home }}\nodemanager'
+      nodemanager_password: welcome1 #should be from Vault
+      install_weblogic_nodemanager_service: '{{ domains_home }}\{{ domain_name }}\bin\installNodeMgrSvc.cmd'
+      service_name: Oracle Weblogic {{ domain_name }} NodeManager
+     
+   tasks:
+
+    - name: "Using a template to create the ohs nodemanager service command file"
+      ansible.windows.win_template:
+        src: templates/installNodemgrService-ohs.cmd.j2
+        dest: "{{ install_weblogic_nodemanager_service }}"
+    - name: "Create OHS Nodemanager as windows service"
+      win_command: '{{ install_weblogic_nodemanager_service }}'
+    - name: "start OHS node manager service"
+      win_service:
+        name: '{{ service_name }}'
+        state: started

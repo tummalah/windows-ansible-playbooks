@@ -1,0 +1,23 @@
+---
+ - name: Ansible ohs start example 
+   hosts: windows
+   vars:
+      
+      ohs_home: 'D:\Oracle\product\ohs122140'
+      ohs_domain_name: OHSE1
+      ohs_domain: 'D:\Oracle\config\domains\{{ohs_domain_name}}'
+      nodemanager_username: weblogic
+      nodemanager_password: welcome1
+      server_hostname: '{{ansible_fqdn}}'
+      destination_folder: 'D:\Oracle\Tools'
+      ohs_instances:
+        - ohs1
+   tasks:
+    - name: "Copy the Starter Scripts from template"
+      ansible.windows.win_template:
+        src: templates/ohs-start.py.j2
+        dest: '{{ destination_folder }}\ohs-start-{{ item }}.py'
+      loop: "{{ ohs_instances }}"
+    - name: "Start ohs instances"
+      win_command: '{{ ohs_home }}\oracle_common\common\bin\wlst.cmd {{ destination_folder }}\ohs-start-{{ item }}.py'
+      loop: "{{ ohs_instances }}"

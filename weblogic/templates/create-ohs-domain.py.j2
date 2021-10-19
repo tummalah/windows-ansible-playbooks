@@ -7,7 +7,7 @@ v_domainName='{{ohs_domain_name}}'
 v_NMUsername='{{nodemanager_username}}'
 v_NMPassword='{{nodemanager_password}}'
 v_NMHome='{{nodemanager_home}}'
-#v_NMHost='{{server_hostname}}'
+v_NMHost='{{server_hostname}}'
 #v_NMPort=5557
 v_OHSInstanceName='{{ohs_instance}}'
 v_OHSAdminPort='{{ohs_adminport}}'
@@ -36,10 +36,11 @@ cd('/')
 delete(v_OHSInstanceName,'SystemComponent')
 create (v_OHSInstanceName,'SystemComponent')
 cd('/OHS/'+v_OHSInstanceName)
-cmo.setAdminHost('localhost')
+cmo.setAdminHost(v_NMHost)
 cmo.setAdminPort(v_OHSAdminPort)
 cmo.setListenPort(v_OHSHTTPPort)
 cmo.setSSLListenPort(v_OHSSSLPort)
+cmo.setServerName(v_NMHost)
  
 writeDomain(v_domainHome) 
  

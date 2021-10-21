@@ -1,0 +1,30 @@
+---
+ - name: Ansible weblogic add machine in domain example 
+   hosts: windows
+   vars:
+      
+      weblogic_home: 'D:\\Oracle\\product\\fmw122140\\wlserver'
+      domain_name: WLE1POC
+      nodemanager_username: weblogic #should be from Vault
+      weblogic_admin: weblogic #should be from Vault
+      admin_server_name: AdminServer
+      admin_server_port: 7001
+      server_hostname: '{{ ansible_fqdn }}'
+     
+      weblogic_admin_pass: welcome1 #should be from Vault
+      node_manager_listen_address : 5556
+      machines:
+       - RCHE1ANS01
+       - RCHE1ANS02
+      install_weblogic_machine_file: 'D:\softwares\create-machine-{{ item }}.py'
+   tasks:
+    
+    - name: "Using a template to create the Weblogic machine py file"
+      ansible.windows.win_template:
+        src: templates/create-machine.py.j2
+        dest: "{{ install_weblogic_machine_file }}"
+      loop: "{{ machines }}"
+       
+    - name: "Create Weblogic Machine from file"
+      win_command: '{{ weblogic_home }}\common\bin\wlst.cmd {{ install_weblogic_machine_file }}'
+      loop: "{{ machines }}"

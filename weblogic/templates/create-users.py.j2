@@ -1,0 +1,16 @@
+
+
+weblogic_domain = '{{ domain_name }}'
+ADMIN_SERVER_URL = 't3://' + '{{ server_hostname }}' + ':' + '{{ admin_server_port }}';
+connect('{{ weblogic_admin }}', '{{ weblogic_admin_pass }}', ADMIN_SERVER_URL);
+serverConfig()
+cd('/SecurityConfiguration/'+weblogic_domain+'/Realms/myrealm/AuthenticationProviders/DefaultAuthenticator')
+
+{% for user in users %}
+{% for key, value in user.items() %}
+cmo.createUser('{{ value["id"] }}','{{ value["password"] }}','test')
+cmo.addMemberToGroup('{{ value["group"] }}','{{ value["id"] }}')
+{% endfor %}
+{% endfor %}
+
+disconnect();
